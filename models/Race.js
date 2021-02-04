@@ -5,6 +5,10 @@ const RaceSchema = new Schema({
   title: {
     type: String,
     required: true
+  },
+  distance: {
+    type: String,
+    required: true
   }
 })
 

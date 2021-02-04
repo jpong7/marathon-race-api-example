@@ -13,7 +13,7 @@ app.use(bodyParser.json())
 
 const db = require('./config/keys').mongoURI
 mongoose
-  .connect(db, { useUnifiedTopology: true })
+  .connect(db, { useUnifiedTopology: true, useNewUrlParser: true })
   .then(() => console.log('MongoDB Connected'))
   .catch((err) => console.log('Unable to connect MongoDB', err))
 
@@ -23,8 +23,8 @@ app.all('/', function (req, res) {
 })
 
 app.use('/basic-js-ts', basicJsTs)
-app.use('/api/race', race);
-app.use('/api/profile', profile);
+app.use('/api/race', race)
+app.use('/api/profile', profile)
 
 const port = process.env.PORT || 5000
 

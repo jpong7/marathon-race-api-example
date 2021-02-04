@@ -1,7 +1,5 @@
 const express = require('express')
 const router = express.Router()
-const mongoose = require('mongoose')
-const moment = require('moment')
 //const passport = require('passport');
 
 //Load Validation
@@ -15,6 +13,7 @@ const Profile = require('../../models/Profile')
 // @desc    Get all profiles
 router.get('/', (req, res) => {
   Profile.find()
+    .populate('race', ['title', 'distance'])
     .sort({ createdAt: -1 })
     .then((result) => res.json(result))
     .catch((err) => res.status(404).json({ error: err }))
@@ -24,6 +23,7 @@ router.get('/', (req, res) => {
 // @desc    Get profile by id
 router.get('/:id', (req, res) => {
   Profile.findById(req.params.id)
+    .populate('race', ['title', 'distance'])
     .then((result) => res.json(result))
     .catch((err) =>
       res.status(404).json({ error: 'No post found with that ID' })
@@ -56,6 +56,7 @@ router.post('/', (req, res) => {
       en: req.body.lastName.en,
     }
   if (req.body.birthdate) profileFields.birthdate = req.body.birthdate
+  if (req.body.email) profileFields.email = req.body.email
   if (req.body.idCardNo) profileFields.idCardNo = req.body.idCardNo
   if (req.body.address) profileFields.address = req.body.address
   if (req.body.contact) profileFields.contact = req.body.contact
@@ -88,6 +89,7 @@ router.put('/:id', (req, res) => {
         en: req.body.lastName.en,
       }
     if (req.body.birthdate) profile.birthdate = req.body.birthdate
+    if (req.body.email) profile.email = req.body.email
     if (req.body.idCardNo) profile.idCardNo = req.body.idCardNo
     if (req.body.address) profile.address = req.body.address
     if (req.body.contact) profile.contact = req.body.contact
@@ -97,7 +99,7 @@ router.put('/:id', (req, res) => {
     if (req.body.applicantBackground) {
       profile.applicantBackground = {
         isPreviouslyRun: req.body.applicantBackground.isPreviouslyRun,
-        expectTime: req.body.applicantBackground.expectTime
+        expectTime: req.body.applicantBackground.expectTime,
       }
     }
 

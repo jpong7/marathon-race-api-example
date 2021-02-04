@@ -1,6 +1,5 @@
 const express = require('express')
 const router = express.Router()
-const mongoose = require('mongoose')
 //const passport = require('passport');
 
 //Load Profile Model
@@ -19,8 +18,24 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
   const newRace = new Race({
     title: req.body.title,
+    distance: req.body.distance,
   })
   newRace.save().then((result) => res.json(result))
+})
+
+// @route   PUT api/race/:id
+// @desc    Update race by id
+router.put('/:id', (req, res) => {
+  Race.findOne({ _id: req.params.id }).then((race) => {
+    if (!race) {
+      return res.json({ message: 'No ID' })
+    }
+
+    if (req.body.title) race.title = req.body.title
+    if (req.body.distance) race.distance = req.body.distance
+
+    race.save().then((race) => res.json(race))
+  })
 })
 
 module.exports = router
