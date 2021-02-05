@@ -22,7 +22,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage: storage,
   limits: {
-    fieldSize: 1024 * 1024 * 5,
+    fieldSize: 300 * 300,
   },
   fileFilter: fileFilter,
 })
@@ -217,9 +217,12 @@ router.put('/:id', (req, res) => {
 // @desc    Confirm profile
 router.put('/:id/confirm', (req, res) => {
   Profile.findOne({ _id: req.params.id }).then((profile) => {
-    // if (!profile) {
-    //   return res.json({ message: 'No profile' })
-    // }
+    if (!profile) {
+      return res.json({ message: 'No profile' })
+    }
+    if (profile.isActive) {
+      return res.json({ message: 'Profile has been confirmed', profile })
+    }
     const { errors, isValid } = validateProfileConfirmInput(profile)
     if (!isValid) {
       return res.status(400).json(errors)

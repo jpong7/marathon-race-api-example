@@ -6,17 +6,6 @@ const fib = (num) => {
   return fib(num - 2) + fib(num - 1)
 }
 
-const arrayMove = (arr, old_index, new_index) => {
-  if (new_index >= arr.length) {
-    var k = new_index - arr.length + 1
-    while (k--) {
-      arr.push(undefined)
-    }
-  }
-  arr.splice(new_index, 0, arr.splice(old_index, 1)[0])
-  return arr
-}
-
 const getUnique = (arr) => {
   let uniqueArray = []
   for (i = 0; i < arr.length; i++) {
@@ -47,10 +36,6 @@ const fizzBuzz = (input) => {
 
 router.get('/fibonacci/:input', function (req, res) {
   res.json({ output: fib(req.params.input) })
-})
-
-router.get('/array-shift', function (req, res) {
-  res.json({ output: arrayMove([1, 2, 3], 0, 1) })
 })
 
 router.get('/second-max', function (req, res) {
