@@ -1,5 +1,32 @@
 const express = require('express')
 const router = express.Router()
+const multer = require('multer')
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './uploads/')
+  },
+  filename: function (req, file, cb) {
+    cb(null, new Date().toISOString() + file.originalname)
+  },
+})
+
+const fileFilter = (req, file, cb) => {
+  //reject a file
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+    cb(null, true)
+  } else {
+    cb(null, false)
+  }
+}
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fieldSize: 1024 * 1024 * 5,
+  },
+  fileFilter: fileFilter,
+})
+
 //const passport = require('passport');
 
 //Load Validation
@@ -36,13 +63,10 @@ router.post('/', (req, res) => {
   const { errors, isValid } = validateProfileInput(req.body)
   // Check Validation
   if (!isValid) {
-    // If any errors, send 400 with errors object
     return res.status(400).json(errors)
   }
-
   // Get fields
   const profileFields = {}
-  //profileFields.race = req.params.race;
   if (req.body.race) profileFields.race = req.body.race
   if (req.body.title) profileFields.title = req.body.title
   if (req.body.firstName)
@@ -65,10 +89,26 @@ router.post('/', (req, res) => {
   new Profile(profileFields).save().then((profile) => res.json(profile))
 })
 
+// @route   PUT api/profile/:id/upload
+// @desc    Upload Profile Image
+router.put('/:id/upload', upload.single('recentPhoto'), (req, res) => {
+  Profile.findOne({ _id: req.params.id }).then((profile) => {
+    if (!profile) {
+      return res.json({ message: 'No profile' })
+    }
+    if (profile.isActive) {
+      return res.json({ message: 'Profile has been confirmed', profile })
+    }
+    var pathImage = req.file.path
+    profile.recentPhoto = pathImage
+    profile.save().then((profile) => res.json(profile))
+  })
+})
+
 // @route   PUT api/profile/:id
 // @desc    Update profile
 router.put('/:id', (req, res) => {
-  Profile.findOne({ _id: req.params.id, isActive: false }).then((profile) => {
+  Profile.findOne({ _id: req.params.id }).then((profile) => {
     if (!profile) {
       return res.json({ message: 'No profile' })
     }
@@ -177,12 +217,9 @@ router.put('/:id', (req, res) => {
 // @desc    Confirm profile
 router.put('/:id/confirm', (req, res) => {
   Profile.findOne({ _id: req.params.id }).then((profile) => {
-    if (!profile) {
-      return res.json({ message: 'No profile' })
-    }
-    if (profile.isActive) {
-      return res.json({ message: 'Profile has been confirmed', profile })
-    }
+    // if (!profile) {
+    //   return res.json({ message: 'No profile' })
+    // }
     const { errors, isValid } = validateProfileConfirmInput(profile)
     if (!isValid) {
       return res.status(400).json(errors)

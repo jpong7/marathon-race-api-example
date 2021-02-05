@@ -9,11 +9,12 @@ const ProfileSchema = new Schema({
   },
   title: {
     type: String,
-    required: true,
+    //required: true,
   },
   firstName: {
     th: {
       type: String,
+      //required: true,
     },
     en: {
       type: String,
@@ -47,8 +48,8 @@ const ProfileSchema = new Schema({
   },
   bibName: {
     type: String,
-    required: true,
-    max: 10,
+    //required: true,
+    //max: 10,
   },
   applicantBackground: {
     isPreviouslyRun: {

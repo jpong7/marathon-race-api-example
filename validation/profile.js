@@ -1,21 +1,26 @@
-const Validator = require('validator');
-const isEmpty = require('./is-empty');
+const validator = require('validator')
+const isEmpty = require('./is-empty')
 
 module.exports = function validateProfileInput(data) {
-  let errors = {};
+  let errors = {}
 
-  data.title = !isEmpty(data.title) ? data.title : '';
+  //data.title = !isEmpty(data.title) ? data.title : ''
+  //data.email = !isEmpty(data.email) ? data.email : ''
 
-  if (Validator.isEmpty(data.title)) {
-    errors.title = 'This field is required';
+  if (!validator.isUppercase(data.bibName)) {
+    errors.bibName =  'BIB should be uppercase'
   }
 
-  // if (!Validator.isLength(data.text, { min: 10, max: 300 })) {
-  //   errors.text = 'Post must be between 10 and 300 characters';
-  // }
+  if (!validator.isAlphanumeric(data.bibName)) {
+    bibName.bibName2 = 'BIB should be numeric'
+  }
+
+  if (!validator.isLength(data.bibName, { max: 10 })) {
+    errors.bibName3 = 'Max BIB must be 10';
+  }
 
   return {
     errors,
-    isValid: isEmpty(errors)
-  };
-};
+    isValid: isEmpty(errors),
+  }
+}
